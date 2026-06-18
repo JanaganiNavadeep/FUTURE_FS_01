@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Site Preview</title>
+    <style>
+        body{font-family:Arial,Helvetica,sans-serif;margin:0;display:flex;height:100vh}
+        .sidebar{width:320px;background:#f7f7f9;border-right:1px solid #e3e3e3;padding:18px;box-sizing:border-box;overflow:auto}
+        .sidebar h2{margin:0 0 12px}
+        .pages{list-style:none;padding:0;margin:0}
+        .pages li{margin:8px 0}
+        .pages a{color:#2b6cb0;text-decoration:none}
+        .controls{margin-top:14px}
+        .preview-wrap{flex:1;display:flex;flex-direction:column}
+        .preview-toolbar{padding:8px 12px;border-bottom:1px solid #e9e9e9;background:#fff}
+        .preview-frame{flex:1;border:0;width:100%}
+        .note{font-size:13px;color:#666;margin-top:8px}
+        button{padding:6px 10px;margin-left:6px}
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <h2>Site Preview</h2>
+        <p class="note">Click a page to load a preview in the right pane. Some PHP pages require a local server (PHP/Apache) to render.</p>
+        <ul class="pages" id="pagesList">
+            <li><a href="#" data-src="index.html">Home — index.html</a></li>
+            <li><a href="#" data-src="about.html">About — (if present)</a></li>
+            <li><a href="#" data-src="projects.html">Projects — (if present)</a></li>
+            <li><a href="#" data-src="contact.html">Contact — (static)</a></li>
+            <li><a href="#" data-src="admin/dashboard.html">Admin Dashboard — admin/dashboard.html</a></li>
+            <li><a href="#" data-src="./api/contact.php">API Contact (PHP) — api/contact.php</a></li>
+        </ul>
+        <div class="controls">
+            <label for="customUrl">Open custom URL:</label>
+            <input id="customUrl" placeholder="relative or absolute URL" style="width:100%;padding:6px;margin-top:6px;box-sizing:border-box">
+            <div style="margin-top:8px;text-align:right">
+                <button id="openBtn">Open</button>
+            </div>
+        </div>
+    </aside>
+
+    <div class="preview-wrap">
+        <div class="preview-toolbar">
+            <span id="currentPath">No page loaded</span>
+            <span style="float:right">
+                <button id="openNew">Open in new tab</button>
+            </span>
+        </div>
+        <iframe id="previewFrame" class="preview-frame" src="about:blank"></iframe>
+    </div>
+
+    <script>
+        const pagesList = document.getElementById('pagesList');
+        const frame = document.getElementById('previewFrame');
+        const currentPath = document.getElementById('currentPath');
+        const openBtn = document.getElementById('openBtn');
+        const customUrl = document.getElementById('customUrl');
+        const openNew = document.getElementById('openNew');
+
+        pagesList.addEventListener('click', e => {
+            const a = e.target.closest('a');
+            if (!a) return;
+            e.preventDefault();
+            const src = a.getAttribute('data-src');
+            if (!src) return;
+            loadPreview(src);
+        });
+
+        openBtn.addEventListener('click', () => {
+            const url = customUrl.value.trim();
+            if (!url) return alert('Enter a URL or path to preview.');
+            loadPreview(url);
+        });
+
+        openNew.addEventListener('click', () => {
+            const src = frame.src;
+            if (!src || src === 'about:blank') return alert('No preview loaded');
+            window.open(src, '_blank');
+        });
+
+        function loadPreview(src){
+            // If a relative path is given, ensure it is relative to this folder
+            frame.src = src;
+            currentPath.textContent = src;
+        }
+
+        // If a `src` query parameter is provided, load that page; otherwise load index
+        const params = new URLSearchParams(window.location.search);
+        const initial = params.get('src');
+        if (initial) {
+            loadPreview(initial);
+        } else {
+            loadPreview('index.html');
+        }
+    </script>
+</body>
+</html>

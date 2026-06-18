@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .dashboard-header h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-header p {
+            color: #666;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .stat-card i {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .content-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .content-section h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #ff5252;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        table thead {
+            background: #f5f5f5;
+        }
+
+        table th {
+            padding: 1rem;
+            text-align: left;
+            color: #333;
+            font-weight: 600;
+            border-bottom: 2px solid #ddd;
+        }
+
+        table td {
+            padding: 1rem;
+            border-bottom: 1px solid #ddd;
+            color: #666;
+        }
+
+        table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-buttons button {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #45a049;
+        }
+
+        .btn-delete:hover {
+            background: #da190b;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .badge-unread {
+            background: #f59e0b;
+        }
+
+        .badge-read {
+            background: #10b981;
+        }
+
+        .badge-pending {
+            background: #6b7280;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .message-preview-panel {
+            background: #f5f7ff;
+            border: 1px solid #dbe4ff;
+            border-radius: 15px;
+            padding: 1.5rem;
+            min-height: 320px;
+            overflow: auto;
+        }
+
+        .message-preview-panel h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+
+        .message-preview-meta {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+            color: #374151;
+        }
+
+        .message-preview-meta span {
+            display: inline-flex;
+            gap: 0.25rem;
+            align-items: center;
+        }
+
+        .message-preview-body {
+            white-space: pre-wrap;
+            line-height: 1.7;
+            color: #4b5563;
+        }
+
+        .message-grid {
+            display: grid;
+            grid-template-columns: 2.2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 992px) {
+            .message-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .selected-row {
+            background: #eef2ff;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .stats-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-box {
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-box strong {
+            color: #333;
+        }
+
+        .info-box span {
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            table th, table td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <h1><i class="fas fa-tachometer-alt"></i> Portfolio Admin Dashboard</h1>
+            <p>Manage your portfolio content, view statistics, and respond to messages</p>
+        </div>
+
+        <!-- Statistics -->
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <i class="fas fa-graduation-cap"></i>
+                <div class="stat-number" id="educationCount">0</div>
+                <div class="stat-label">Education Records</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-code"></i>
+                <div class="stat-number" id="skillCount">0</div>
+                <div class="stat-label">Skills</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-project-diagram"></i>
+                <div class="stat-number" id="projectCount">0</div>
+                <div class="stat-label">Projects</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-award"></i>
+                <div class="stat-number" id="certificateCount">0</div>
+                <div class="stat-label">Certificates</div>
+            </div>
+        </div>
+
+        <!-- Messages Section -->
+        <div class="content-section">
+            <h2><i class="fas fa-envelope"></i> Recent Contact Messages</h2>
+            <div class="message-grid">
+                <div id="messageContainer" class="table-responsive">
+                    <p style="color: #999;">Loading messages...</p>
+                </div>
+                <div id="messagePreview" class="message-preview-panel">
+                    <h3>Message Preview</h3>
+                    <p style="color: #6b7280;">Select a message from the list to view its content here.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Education -->
+        <div class="content-section">
+            <h2><i class="fas fa-plus-circle"></i> Add Education Record</h2>
+            <div id="educationMessage" class="message"></div>
+            <form id="educationForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Degree Name *</label>
+                        <input type="text" name="degree_name" required placeholder="e.g., Bachelor of Technology">
+                    </div>
+                    <div class="form-group">
+                        <label>Institution Name *</label>
+                        <input type="text" name="institution_name" required placeholder="e.g., Mohan Babu University">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" name="location" placeholder="e.g., Tirupati, India">
+                    </div>
+                    <div class="form-group">
+                        <label>Start Year *</label>
+                        <input type="number" name="start_year" required min="1950" max="2100">
+                    </div>
+                    <div class="form-group">
+                        <label>End Year *</label>
+                        <input type="number" name="end_year" required min="1950" max="2100">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Percentage/GPA</label>
+                        <input type="number" name="percentage" step="0.01" min="0" max="100" placeholder="e.g., 95.5">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" placeholder="Additional details about this education..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Add Education Record
+                </button>
+            </form>
+        </div>
+
+        <!-- Add Project -->
+        <div class="content-section">
+            <h2><i class="fas fa-plus-circle"></i> Add Project</h2>
+            <div id="projectMessage" class="message"></div>
+            <form id="projectForm">
+                <div class="form-group">
+                    <label>Project Name *</label>
+                    <input type="text" name="project_name" required placeholder="Project name">
+                </div>
+                <div class="form-group">
+                    <label>Description *</label>
+                    <textarea name="description" required placeholder="Project description..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Technologies Used</label>
+                        <input type="text" name="technologies_used" placeholder="e.g., HTML, CSS, JavaScript">
+                    </div>
+                    <div class="form-group">
+                        <label>Repository Link</label>
+                        <input type="url" name="repository_link" placeholder="https://github.com/...">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Live Link</label>
+                        <input type="url" name="live_link" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label>Featured?</label>
+                        <select name="featured">
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Add Project
+                </button>
+            </form>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="content-section">
+            <h2><i class="fas fa-link"></i> Quick Links</h2>
+            <div class="stats-info">
+                <div class="info-box">
+                    <strong>Frontend:</strong> <a href="../index.html" target="_blank">View Portfolio</a>
+                </div>
+                <div class="info-box">
+                    <strong>API Endpoint:</strong> <code>/api/portfolio.php?action=all</code>
+                </div>
+                <div class="info-box">
+                    <strong>Database:</strong> portfolio_janagani
+                </div>
+                <div class="info-box">
+                    <strong>Email:</strong> janaganinavadeep7@gmail.com
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; color: white; margin-top: 2rem;">
+            <p>&copy; 2024 Janagani Navadeep Portfolio Admin. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        // Fetch portfolio data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPortfolioStats();
+            loadRecentMessages();
+        });
+
+        // Load Portfolio Statistics
+        async function loadPortfolioStats() {
+            try {
+                const response = await fetch('../api/portfolio.php?action=summary');
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    document.getElementById('educationCount').textContent = data.data.education_count || 0;
+                    document.getElementById('skillCount').textContent = data.data.skill_count || 0;
+                    document.getElementById('projectCount').textContent = data.data.project_count || 0;
+                    document.getElementById('certificateCount').textContent = data.data.certificate_count || 0;
+                }
+            } catch (error) {
+                console.error('Error loading statistics:', error);
+            }
+        }
+
+        // Load Recent Messages
+        async function loadRecentMessages() {
+            try {
+                const response = await fetch('../api/contact.php?action=messages&limit=20');
+                const data = await response.json();
+                const container = document.getElementById('messageContainer');
+                const preview = document.getElementById('messagePreview');
+                window.adminMessages = data.data;
+
+                if (data.status !== 'success' || !Array.isArray(data.data)) {
+                    container.innerHTML = '<p style="color: #999;">Unable to load messages right now.</p>';
+                    preview.innerHTML = '<h3>Message Preview</h3><p style="color: #999;">No preview available.</p>';
+                    return;
+                }
+
+                if (data.data.length === 0) {
+                    container.innerHTML = `
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>From</th>
+                                    <th>Email</th>
+                                    <th>Subject</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: #999;">
+                                        No messages have been submitted yet.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    `;
+                    preview.innerHTML = '<h3>Message Preview</h3><p style="color: #999;">No messages to preview.</p>';
+                    return;
+                }
+
+                const rows = data.data.map((message, index) => {
+                    const statusLabel = message.read_status === '1' || message.read_status === 1 ? 'Read' : 'Unread';
+                    const responseLabel = message.response_status ? message.response_status.charAt(0).toUpperCase() + message.response_status.slice(1) : 'Pending';
+                    const statusBadge = message.read_status === '1' || message.read_status === 1 ? '<span class="badge badge-read">Read</span>' : '<span class="badge badge-unread">Unread</span>';
+                    const responseBadge = `<span class="badge badge-pending">${escapeHtml(responseLabel)}</span>`;
+
+                    return `
+                        <tr class="message-row" data-message-index="${index}">
+                            <td>${escapeHtml(message.sender_name)}</td>
+                            <td><a href="mailto:${escapeHtml(message.sender_email)}">${escapeHtml(message.sender_email)}</a></td>
+                            <td>${escapeHtml(message.subject || 'No subject')}</td>
+                            <td>${escapeHtml(message.created_at)}</td>
+                            <td>${statusBadge} ${responseBadge}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                container.innerHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>From</th>
+                                <th>Email</th>
+                                <th>Subject</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rows}
+                        </tbody>
+                    </table>
+                `;
+
+                const tbody = container.querySelector('tbody');
+                tbody.addEventListener('click', function(event) {
+                    const row = event.target.closest('tr');
+                    if (!row || !row.dataset.messageIndex) {
+                        return;
+                    }
+                    const message = window.adminMessages[parseInt(row.dataset.messageIndex, 10)];
+                    showMessagePreview(message, row);
+                });
+
+                // Auto-select first message row
+                const firstRow = container.querySelector('tbody tr');
+                if (data.data.length > 0 && firstRow) {
+                    showMessagePreview(data.data[0], firstRow);
+                }
+            } catch (error) {
+                console.error('Error loading messages:', error);
+                document.getElementById('messageContainer').innerHTML = '<p style="color: #999;">Failed to load messages.</p>';
+                document.getElementById('messagePreview').innerHTML = '<h3>Message Preview</h3><p style="color: #999;">No preview available.</p>';
+            }
+        }
+
+        function showMessagePreview(message, row = null) {
+            const preview = document.getElementById('messagePreview');
+            const statusLabel = message.read_status === '1' || message.read_status === 1 ? 'Read' : 'Unread';
+            const statusBadge = message.read_status === '1' || message.read_status === 1 ? '<span class="badge badge-read">Read</span>' : '<span class="badge badge-unread">Unread</span>';
+            const responseLabel = message.response_status ? message.response_status.charAt(0).toUpperCase() + message.response_status.slice(1) : 'Pending';
+
+            preview.innerHTML = `
+                <h3>Message Preview</h3>
+                <div class="message-preview-meta">
+                    <span><strong>From:</strong> ${escapeHtml(message.sender_name)}</span>
+                    <span><strong>Email:</strong> <a href="mailto:${escapeHtml(message.sender_email)}">${escapeHtml(message.sender_email)}</a></span>
+                    <span><strong>Subject:</strong> ${escapeHtml(message.subject || 'No subject')}</span>
+                    <span><strong>Date:</strong> ${escapeHtml(message.created_at)}</span>
+                    <span>${statusBadge} <span class="badge badge-pending">${escapeHtml(responseLabel)}</span></span>
+                </div>
+                <div class="message-preview-body">${escapeHtml(message.message_text)}</div>
+            `;
+
+            if (row) {
+                const rows = document.querySelectorAll('.message-row');
+                rows.forEach(r => r.classList.remove('selected-row'));
+                row.classList.add('selected-row');
+            }
+        }
+
+        function escapeHtml(text) {
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // Handle Education Form
+        document.getElementById('educationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Note: You'll need to create a backend endpoint to save education records
+            const messageEl = document.getElementById('educationMessage');
+            messageEl.className = 'message success';
+            messageEl.textContent = '✓ Education record would be saved here. Create a POST endpoint in /api/education.php';
+            messageEl.style.display = 'block';
+            
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+                this.reset();
+            }, 3000);
+        });
+
+        // Handle Project Form
+        document.getElementById('projectForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const messageEl = document.getElementById('projectMessage');
+            messageEl.className = 'message success';
+            messageEl.textContent = '✓ Project would be saved here. Create a POST endpoint in /api/projects.php';
+            messageEl.style.display = 'block';
+            
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+                this.reset();
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
